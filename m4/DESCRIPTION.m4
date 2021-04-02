@@ -27,7 +27,8 @@ LinkingTo: Rcpp
 Suggests: 
     testthat
 URL: https://github.com/shabbychef/PKG_NAME()
-VignetteBuilder: knitr
+dnl VignetteBuilder: knitr
+Encoding: UTF-8
 Collate:
 m4_R_FILES()
 dnl vim:ts=2:sw=2:tw=79:syn=m4:ft=m4:et

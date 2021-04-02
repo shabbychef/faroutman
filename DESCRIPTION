@@ -23,7 +23,7 @@ LinkingTo: Rcpp
 Suggests: 
     testthat
 URL: https://github.com/shabbychef/faroutman
-VignetteBuilder: knitr
+Encoding: UTF-8
 Collate:
     'faroutman.r'
-RoxygenNote: 7.1.1
+    'RcppExports.R'
