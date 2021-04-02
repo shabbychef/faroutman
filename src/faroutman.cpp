@@ -174,18 +174,19 @@ IntegerVector cosine_esc(NumericVector x, NumericVector y,
 
   int iii;
   for (iii=0;iii < x.size();iii++) {
-    myx=0;myy=0;
-    while (it < maxit) {
-        x2 = myx*myx;
-        y2 = myy*myy;
-        modulus = x2 + y2;
-        if (modulus > escape) { break; }
-        it++;
-        tmpx = myx;
-        myx = cos(myx)*cosh(myy) + x[iii];
-        myy = -sin(tmpx)*sinh(myy) + y[iii];
-    }
-    retv[iii] = it;
+      it = 0;
+      myx=x[iii];myy=y[iii];
+      while (it < maxit) {
+          x2 = myx*myx;
+          y2 = myy*myy;
+          modulus = x2 + y2;
+          if (modulus > escape) { break; }
+          it++;
+          tmpx = myx;
+          myx = cos(myx)*cosh(myy) + x[iii];
+          myy = -sin(tmpx)*sinh(myy) + y[iii];
+      }
+      retv[iii] = it;
   }
   return(retv);
 }
@@ -224,18 +225,19 @@ IntegerVector exp_esc(NumericVector x, NumericVector y,
 
   int iii;
   for (iii=0;iii < x.size();iii++) {
-    myx=0;myy=0;
-    while (it < maxit) {
-        x2 = myx*myx;
-        y2 = myy*myy;
-        modulus = x2 + y2;
-        if (modulus > escape) { break; }
-        it++;
-		emx = exp(myx);
-        myx = emx*cos(myy) + x[iii];
-        myy = emx*sin(myy) + y[iii];
-    }
-    retv[iii] = it;
+      it = 0;
+      myx=0;myy=0;
+      while (it < maxit) {
+          x2 = myx*myx;
+          y2 = myy*myy;
+          modulus = x2 + y2;
+          if (modulus > escape) { break; }
+          it++;
+          emx = exp(myx);
+          myx = emx*cos(myy) + x[iii];
+          myy = emx*sin(myy) + y[iii];
+      }
+      retv[iii] = it;
   }
   return(retv);
 }

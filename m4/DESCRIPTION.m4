@@ -22,6 +22,9 @@ Imports:
     ggplot2,
     dplyr,
     viridis,
+    tidyr,
+    tibble,
+    magrittr,
     methods
 LinkingTo: Rcpp
 Suggests: 
