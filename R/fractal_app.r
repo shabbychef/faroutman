@@ -152,7 +152,9 @@ fractal_app <- function() {
 			})
 			output$theplot <- renderPlot({
 				ph <- xyzs() %>%
-					ggplot(aes(x=x,y=y,fill=log(1+mi))) + 
+					#mutate(transfill=sqrt(mi-min(mi))) %>%
+					mutate(transfill=log(1+mi-min(mi))) %>%
+					ggplot(aes(x=x,y=y,fill=transfill)) + 
 					scale_fill_viridis(option=input$colorscheme,direction=-1) + 
 					geom_tile(size=0) +
 					coord_equal() + 
