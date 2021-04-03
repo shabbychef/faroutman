@@ -51,8 +51,8 @@ fractal_app <- function() {
 								sidebarPanel(helpText('Brush plot then double click to zoom in. ',
 																			'Double click without brush to reset. '),
 														 hr(),
-														 sliderInput("resolution","Depth: ",min=10,max=2400,value=85,step=5),
-														 sliderInput("dpi", "Pixel Resolution: ",min=50,max=250,value=100,step=10),
+														 sliderInput("resolution","Depth: ",min=10,max=3000,value=95,step=5),
+														 sliderInput("dpi", "Pixel Resolution: ",min=50,max=200,value=100,step=10),
 														 hr(),
 														 actionButton("panleft","pan left"),
 														 actionButton("zoomout","zoom out"),
@@ -146,8 +146,8 @@ fractal_app <- function() {
 			 })
 
 			xyzs <- reactive({
-				xt <- tibble(x=seq(viewport$xmin,viewport$xmax,length.out=ceiling(5*ar*input$dpi)))
-				yt <- tibble(y=seq(viewport$ymin,viewport$ymax,length.out=ceiling(5*input$dpi)))
+				xt <- tibble(x=seq(viewport$xmin,viewport$xmax,length.out=ceiling(5.2*ar*input$dpi)))
+				yt <- tibble(y=seq(viewport$ymin,viewport$ymax,length.out=ceiling(5.2*input$dpi)))
 				crossing(xt,yt) %>% mutate(mi=mandeldeez(x,y,input$resolution,input$fractal))
 			})
 			output$theplot <- renderPlot({
@@ -163,8 +163,8 @@ fractal_app <- function() {
 					guides(color=FALSE,fill=FALSE)
 				ph
 			},
-			height=900,
-			width=ceiling(ar*900))
+			height=850,
+			width=ceiling(ar*850))
 			# should have coords in bookmark. rats.
 			setBookmarkExclude(c('bookmark'))
 			observeEvent(input$bookmark,{
