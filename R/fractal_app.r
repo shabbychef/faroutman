@@ -37,6 +37,8 @@ fractal_app <- function() {
 	ywid <- 2.5
 	init_x <<- c(-0.5-ywid*ar/2,-0.5+ywid*ar/2)
 	init_y <<- (ywid/2) * c(-1,1)
+	cent_x <- mean(init_x)
+	cent_y <- mean(init_y)
 
 	# define UI logic
 	my_ui <- shinyUI(
@@ -51,8 +53,12 @@ fractal_app <- function() {
 								sidebarPanel(helpText('Brush plot then double click to zoom in. ',
 																			'Double click without brush to reset. '),
 														 hr(),
-														 sliderInput("resolution","Depth: ",min=10,max=3000,value=95,step=5),
+														 sliderInput("resolution","Depth: ",min=10,max=9000,value=95,step=5),
 														 sliderInput("dpi", "Pixel Resolution: ",min=50,max=200,value=100,step=10),
+														 hr(),
+														 numericInput("center_x","x: ",min=-2,max=2,value=cent_x,width='60%'),
+														 numericInput("center_y","y: ",min=-2,max=2,value=cent_y,width='60%'),
+														 actionButton("go","go"),
 														 hr(),
 														 actionButton("panleft","pan left"),
 														 actionButton("zoomout","zoom out"),
@@ -91,7 +97,28 @@ fractal_app <- function() {
 		viewport <- reactiveValues(xmin=min(init_x),
 															 xmax=max(init_x),
 															 ymin=min(init_y),
-															 ymax=max(init_y))
+															 ymax=max(init_y),
+															 xdel=max(init_x) - min(init_x),
+															 ydel=max(init_y) - min(init_y))
+
+			 observeEvent({
+				 #input$center_x
+				 #input$center_y
+				 input$go
+			 },{
+					 xcent <- input$center_x
+					 ycent <- input$center_y
+					 xdiff <- (viewport$xmax - viewport$xmin)
+					 ydiff <- (viewport$ymax - viewport$ymin)
+
+					 viewport$xmin <- xcent - 0.5 * xdiff
+					 viewport$xmax <- xcent + 0.5 * xdiff
+					 viewport$ymin <- ycent - 0.5 * ydiff
+					 viewport$ymax <- ycent + 0.5 * ydiff
+					 viewport$xdel <- viewport$xmax - viewport$xmin 
+					 viewport$ydel <- viewport$ymax - viewport$ymin 
+			 })
+
 
 			 observeEvent(input$zoomout,{
 					 xcent <- 0.5 * (viewport$xmin + viewport$xmax)
@@ -104,17 +131,28 @@ fractal_app <- function() {
 					 viewport$xmax <- xcent + uppy * 0.5 * xdiff
 					 viewport$ymin <- ycent - uppy * 0.5 * ydiff
 					 viewport$ymax <- ycent + uppy * 0.5 * ydiff
+					 viewport$xdel <- xdiff
+					 viewport$ydel <- ydiff
+
+					updateNumericInput(session,'center_x',value=xcent)
+					updateNumericInput(session,'center_y',value=ycent)
 			 })
 
 			 observeEvent(input$panleft,{
 					 xdiff <- (viewport$xmax - viewport$xmin)
 					 viewport$xmin <- viewport$xmin - 0.33 * xdiff
 					 viewport$xmax <- viewport$xmax - 0.33 * xdiff
+					 #viewport$xdel <- viewport$xmax - viewport$xmin 
+					 xcent <- 0.5 * (viewport$xmin + viewport$xmax)
+					 updateNumericInput(session,'center_x',value=xcent)
 			 })
 			 observeEvent(input$panright,{
 					 xdiff <- (viewport$xmax - viewport$xmin)
 					 viewport$xmin <- viewport$xmin + 0.33 * xdiff
 					 viewport$xmax <- viewport$xmax + 0.33 * xdiff
+					 #viewport$xdel <- viewport$xmax - viewport$xmin 
+					 xcent <- 0.5 * (viewport$xmin + viewport$xmax)
+					 updateNumericInput(session,'center_x',value=xcent)
 			 })
 
 			 # When a double-click happens, check if there's a brush on the plot.
@@ -126,23 +164,27 @@ fractal_app <- function() {
 					 ycent <- 0.5 * (brush$ymin + brush$ymax)
 					 xdiff <- (brush$xmax - brush$xmin)
 					 ydiff <- (brush$ymax - brush$ymin)
-					 if (xdiff > ydiff * ar) {
-						 viewport$xmin <- brush$xmin
-						 viewport$xmax <- brush$xmax
-						 viewport$ymin <- ycent - 0.5 * xdiff / ar
-						 viewport$ymax <- ycent + 0.5 * xdiff / ar
-					 } else {
-						 viewport$xmin <- xcent - 0.5 * ar * ydiff
-						 viewport$xmax <- xcent + 0.5 * ar * ydiff
-						 viewport$ymin <- brush$ymin
-						 viewport$ymax <- brush$ymax
-					 }
 				 } else {
-					 viewport$xmin <- min(init_x)
-					 viewport$xmax <- max(init_x)
-					 viewport$ymin <- min(init_y)
-					 viewport$ymax <- max(init_y)
+					 xcent <- input$center_x
+					 ycent <- input$center_y
+					 xdiff <- (max(init_x) - min(init_x))
+					 ydiff <- (max(init_y) - min(init_y))
 				 }
+				 if (xdiff > ydiff * ar) {
+					 viewport$xmin <- brush$xmin
+					 viewport$xmax <- brush$xmax
+					 viewport$ymin <- ycent - 0.5 * xdiff / ar
+					 viewport$ymax <- ycent + 0.5 * xdiff / ar
+				 } else {
+					 viewport$xmin <- xcent - 0.5 * ar * ydiff
+					 viewport$xmax <- xcent + 0.5 * ar * ydiff
+					 viewport$ymin <- brush$ymin
+					 viewport$ymax <- brush$ymax
+				 }
+				 viewport$xdel <- xdiff
+				 viewport$ydel <- ydiff
+				 updateNumericInput(session,'center_x',value=xcent)
+				 updateNumericInput(session,'center_y',value=ycent)
 			 })
 
 			xyzs <- reactive({
