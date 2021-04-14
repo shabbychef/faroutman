@@ -35,7 +35,8 @@ fractal_app <- function() {
 # 2FIX: parametrize these
 	ar <- 1.667
 	ywid <- 2.5
-	init_x <<- c(-0.5-ywid*ar/2,-0.5+ywid*ar/2)
+	xwid <- ywid * ar
+	init_x <<- -0.5 + (xwid/2) * c(-1,1)
 	init_y <<- (ywid/2) * c(-1,1)
 	cent_x <- mean(init_x)
 	cent_y <- mean(init_y)
@@ -53,16 +54,19 @@ fractal_app <- function() {
 								sidebarPanel(helpText('Brush plot then double click to zoom in. ',
 																			'Double click without brush to reset. '),
 														 hr(),
-														 sliderInput("resolution","Depth: ",min=10,max=9000,value=95,step=5),
-														 sliderInput("dpi", "Pixel Resolution: ",min=50,max=200,value=100,step=10),
-														 hr(),
-														 numericInput("center_x","x: ",min=-2,max=2,value=cent_x,width='60%'),
-														 numericInput("center_y","y: ",min=-2,max=2,value=cent_y,width='60%'),
+														 numericInput("center_x","x center: ",min=-2,max=2,value=cent_x,width='80%'),
+														 numericInput("center_y","y center: ",min=-2,max=2,value=cent_y,width='80%'),
+														 numericInput("width_x","x width: ",min=0,max=4,value=xwid,width='80%'),
+														 numericInput("width_y","y width: ",min=0,max=4,value=ywid,width='80%'),
 														 actionButton("go","go"),
 														 hr(),
-														 actionButton("panleft","pan left"),
 														 actionButton("zoomout","zoom out"),
+														 actionButton("zoomin","zoom in"),
+														 actionButton("panleft","pan left"),
 														 actionButton("panright","pan right"),
+														 hr(),
+														 sliderInput("resolution","Depth: ",min=10,max=9000,value=95,step=5),
+														 sliderInput("dpi", "Pixel Resolution: ",min=50,max=200,value=100,step=10),
 														 hr(),
 														 selectInput("fractal","Fractal: ",
 																				 choices=c('Mandelbroit','Fibonacci','Cos','Exp'),
@@ -92,6 +96,29 @@ fractal_app <- function() {
 									 cos=cosine_esc(x,y,maxit=maxit,escape=(10*pi)^2),
 									 exp=exp_esc(x,y,maxit=maxit,escape=(50)^2))
 	}
+
+
+# set the viewport
+	set_vp <- function(viewport,xcent,ycent,xdiff,ydiff,go_small=FALSE) {
+		if (go_small) {
+			nexd <- min(xdiff,ydiff*ar)
+			neyd <- min(ydiff,xdiff/ar)
+		} else {
+			nexd <- max(xdiff,ydiff*ar)
+			neyd <- max(ydiff,xdiff/ar)
+		}
+		xdiff <- nexd
+		ydiff <- neyd
+
+		viewport$xmin <- xcent - 0.5 * xdiff
+		viewport$xmax <- xcent + 0.5 * xdiff
+		viewport$ymin <- ycent - 0.5 * ydiff
+		viewport$ymax <- ycent + 0.5 * ydiff
+		viewport$xdel <- xdiff
+		viewport$ydel <- ydiff
+		return(viewport)
+	}
+
 # Define server logic # FOLDUP
 	my_server <- function(input, output, session) {
 		viewport <- reactiveValues(xmin=min(init_x),
@@ -108,51 +135,66 @@ fractal_app <- function() {
 			 },{
 					 xcent <- input$center_x
 					 ycent <- input$center_y
-					 xdiff <- (viewport$xmax - viewport$xmin)
-					 ydiff <- (viewport$ymax - viewport$ymin)
-
-					 viewport$xmin <- xcent - 0.5 * xdiff
-					 viewport$xmax <- xcent + 0.5 * xdiff
-					 viewport$ymin <- ycent - 0.5 * ydiff
-					 viewport$ymax <- ycent + 0.5 * ydiff
-					 viewport$xdel <- viewport$xmax - viewport$xmin 
-					 viewport$ydel <- viewport$ymax - viewport$ymin 
+					 xdiff <- input$width_x
+					 ydiff <- input$width_y
+					 viewport <- set_vp(viewport,xcent,ycent,xdiff,ydiff,go_small=TRUE)
+					 updateNumericInput(session,'center_x',value=xcent)
+					 updateNumericInput(session,'center_y',value=ycent)
+					 updateNumericInput(session,'width_x',value=viewport$xdel)
+					 updateNumericInput(session,'width_y',value=viewport$ydel)
 			 })
 
 
 			 observeEvent(input$zoomout,{
-					 xcent <- 0.5 * (viewport$xmin + viewport$xmax)
-					 ycent <- 0.5 * (viewport$ymin + viewport$ymax)
-					 xdiff <- (viewport$xmax - viewport$xmin)
-					 ydiff <- (viewport$ymax - viewport$ymin)
+											uppy <- 1.5
+											xcent <- 0.5 * (viewport$xmin + viewport$xmax)
+											ycent <- 0.5 * (viewport$ymin + viewport$ymax)
+											xdiff <- uppy * (viewport$xmax - viewport$xmin)
+											ydiff <- uppy * (viewport$ymax - viewport$ymin)
 
-					 uppy <- 1.5
-					 viewport$xmin <- xcent - uppy * 0.5 * xdiff
-					 viewport$xmax <- xcent + uppy * 0.5 * xdiff
-					 viewport$ymin <- ycent - uppy * 0.5 * ydiff
-					 viewport$ymax <- ycent + uppy * 0.5 * ydiff
-					 viewport$xdel <- xdiff
-					 viewport$ydel <- ydiff
+											viewport <- set_vp(viewport,xcent,ycent,xdiff,ydiff)
+											updateNumericInput(session,'center_x',value=xcent)
+											updateNumericInput(session,'center_y',value=ycent)
+											updateNumericInput(session,'width_x',value=viewport$xdel)
+											updateNumericInput(session,'width_y',value=viewport$ydel)
+			 })
+			 observeEvent(input$zoomin,{
+											uppy <- 0.666
+											xcent <- 0.5 * (viewport$xmin + viewport$xmax)
+											ycent <- 0.5 * (viewport$ymin + viewport$ymax)
+											xdiff <- uppy * (viewport$xmax - viewport$xmin)
+											ydiff <- uppy * (viewport$ymax - viewport$ymin)
 
-					updateNumericInput(session,'center_x',value=xcent)
-					updateNumericInput(session,'center_y',value=ycent)
+											viewport <- set_vp(viewport,xcent,ycent,xdiff,ydiff)
+											updateNumericInput(session,'center_x',value=xcent)
+											updateNumericInput(session,'center_y',value=ycent)
+											updateNumericInput(session,'width_x',value=viewport$xdel)
+											updateNumericInput(session,'width_y',value=viewport$ydel)
 			 })
 
 			 observeEvent(input$panleft,{
-					 xdiff <- (viewport$xmax - viewport$xmin)
-					 viewport$xmin <- viewport$xmin - 0.33 * xdiff
-					 viewport$xmax <- viewport$xmax - 0.33 * xdiff
-					 #viewport$xdel <- viewport$xmax - viewport$xmin 
-					 xcent <- 0.5 * (viewport$xmin + viewport$xmax)
-					 updateNumericInput(session,'center_x',value=xcent)
+											xcent <- 0.5 * (viewport$xmin + viewport$xmax)
+											ycent <- 0.5 * (viewport$ymin + viewport$ymax)
+											xdiff <- (viewport$xmax - viewport$xmin)
+											ydiff <- (viewport$ymax - viewport$ymin)
+											xcent <- xcent - 0.33 * xdiff
+											viewport <- set_vp(viewport,xcent,ycent,xdiff,ydiff)
+											updateNumericInput(session,'center_x',value=xcent)
+											updateNumericInput(session,'center_y',value=ycent)
+											updateNumericInput(session,'width_x',value=viewport$xdel)
+											updateNumericInput(session,'width_y',value=viewport$ydel)
 			 })
 			 observeEvent(input$panright,{
-					 xdiff <- (viewport$xmax - viewport$xmin)
-					 viewport$xmin <- viewport$xmin + 0.33 * xdiff
-					 viewport$xmax <- viewport$xmax + 0.33 * xdiff
-					 #viewport$xdel <- viewport$xmax - viewport$xmin 
-					 xcent <- 0.5 * (viewport$xmin + viewport$xmax)
-					 updateNumericInput(session,'center_x',value=xcent)
+											xcent <- 0.5 * (viewport$xmin + viewport$xmax)
+											ycent <- 0.5 * (viewport$ymin + viewport$ymax)
+											xdiff <- (viewport$xmax - viewport$xmin)
+											ydiff <- (viewport$ymax - viewport$ymin)
+											xcent <- xcent + 0.33 * xdiff
+											viewport <- set_vp(viewport,xcent,ycent,xdiff,ydiff)
+											updateNumericInput(session,'center_x',value=xcent)
+											updateNumericInput(session,'center_y',value=ycent)
+											updateNumericInput(session,'width_x',value=viewport$xdel)
+											updateNumericInput(session,'width_y',value=viewport$ydel)
 			 })
 
 			 # When a double-click happens, check if there's a brush on the plot.
@@ -185,6 +227,8 @@ fractal_app <- function() {
 				 viewport$ydel <- ydiff
 				 updateNumericInput(session,'center_x',value=xcent)
 				 updateNumericInput(session,'center_y',value=ycent)
+				 updateNumericInput(session,'width_x',value=xdiff)
+				 updateNumericInput(session,'width_y',value=ydiff)
 			 })
 
 			xyzs <- reactive({
