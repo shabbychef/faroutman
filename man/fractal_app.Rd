@@ -19,7 +19,5 @@ fractal_app()
 }
 \author{
 Steven E. Pav \email{shabbychef@gmail.com}
-
-Steven E. Pav \email{shabbychef@gmail.com}
 }
 \keyword{shiny}

@@ -56,10 +56,4 @@ given input \eqn{c}.
 }
 \author{
 Steven E. Pav \email{shabbychef@gmail.com}
-
-Steven E. Pav \email{shabbychef@gmail.com}
-
-Steven E. Pav \email{shabbychef@gmail.com}
-
-Steven E. Pav \email{shabbychef@gmail.com}
 }

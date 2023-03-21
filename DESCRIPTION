@@ -4,8 +4,8 @@ Authors@R: c(person(c("Steven", "E."), "Pav",
     role=c("aut","cre"),
     email="shabbychef@gmail.com",
     comment = c(ORCID = "0000-0002-4197-6195")))
-Version: 0.1.0
-Date: 2021-04-01
+Version: 0.1.1
+Date: 2023-03-21
 License: LGPL-3
 Title: Shiny Fractal Viewer
 BugReports: https://github.com/shabbychef/faroutman/issues
@@ -15,6 +15,7 @@ Depends:
 Imports:
     Rcpp (>= 0.12.3),
     shiny,
+    shinythemes,
     ggplot2,
     dplyr,
     viridis,
@@ -28,7 +29,7 @@ Suggests:
 URL: https://github.com/shabbychef/faroutman
 Encoding: UTF-8
 Collate:
+    'RcppExports.R'
     'faroutman.r'
     'fractal_app.r'
-    'RcppExports.R'
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1

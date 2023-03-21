@@ -19,6 +19,7 @@ Depends:
 Imports:
     Rcpp (>= 0.12.3),
     shiny,
+    shinythemes,
     ggplot2,
     dplyr,
     viridis,

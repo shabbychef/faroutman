@@ -29,6 +29,7 @@ utils::globalVariables(c("fix","me"))
 #' @importFrom viridis scale_fill_viridis
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate
+#' @importFrom shinythemes shinytheme
 #'
 #' @export
 fractal_app <- function() {

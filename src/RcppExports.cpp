@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // mandelbrot_esc
 IntegerVector mandelbrot_esc(NumericVector x, NumericVector y, int maxit, double escape);
 RcppExport SEXP _faroutman_mandelbrot_esc(SEXP xSEXP, SEXP ySEXP, SEXP maxitSEXP, SEXP escapeSEXP) {

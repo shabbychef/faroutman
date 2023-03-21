@@ -9,7 +9,7 @@
 
 VMAJOR 						 = 0
 VMINOR 						 = 1
-VPATCH  					 = 0
+VPATCH  					 = 1
 #VDEV 							 = .0001
 VDEV 							 = 
 PKG_NAME 					:= faroutman
