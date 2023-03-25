@@ -77,11 +77,18 @@ if (require(devtools)) {
 
 # Basic Usage
 
-Run the app via the `faroutman::fractal_app()` function.
+Run the app via the `faroutman::fractal_app()` function.  
+
+One can zoom in the fractal window, then double click to reset the pane.
+Navigation via the x and y center and width is also possible.
+Four fractal types are supported: Mandelbrot, Fibonacci, Cosine and
+Exponential.
+
 
 ## Screenshots
 
 ![](man/figures/screenshot_mandelbrot_one.png)
+![](man/figures/screenshot_mandelbrot_two.png)
 ![](man/figures/screenshot_cos_one.png)
 
 
