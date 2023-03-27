@@ -70,7 +70,7 @@ fractal_app <- function() {
 														 sliderInput("dpi", "Pixel Resolution: ",min=50,max=200,value=100,step=10),
 														 hr(),
 														 selectInput("fractal","Fractal: ",
-																				 choices=c('Mandelbroit','Fibonacci','Cos','Exp'),
+																				 choices=c('Mandelbroit','Fibonacci','Cos','Exp','Burning Ship'),
 																				 selected='Mandelbroit'),
 														 selectInput("colorscheme","Color Scheme: ",
 																				 choices=c('magma','inferno','plasma','viridis','cividis'),
@@ -89,13 +89,14 @@ fractal_app <- function() {
   ) # sidebarLayout
 	,title="Fractal Viewer"))
 
-	mandeldeez <- function(x,y,maxit=100,fractal=c('Mandelbroit','Fibonacci','Cos','Exp')) {
+	mandeldeez <- function(x,y,maxit=100,fractal=c('Mandelbroit','Fibonacci','Cos','Exp','Burning Ship')) {
 		fractal <- match.arg(fractal)
-		retv <- switch(tolower(fractal),
+		retv <- switch(gsub('\\s','_',tolower(fractal)),
 									 mandelbroit=mandelbrot_esc(x,y,maxit=maxit,escape=4.0),
 									 fibonacci=fibonacci_esc(x,y,maxit=maxit,escape=4.0),
 									 cos=cosine_esc(x,y,maxit=maxit,escape=(10*pi)^2),
-									 exp=exp_esc(x,y,maxit=maxit,escape=(50)^2))
+									 exp=exp_esc(x,y,maxit=maxit,escape=(50)^2),
+									 burning_ship=burning_ship_esc(x,y,maxit=maxit,escape=4.0))
 	}
 
 
@@ -247,7 +248,7 @@ fractal_app <- function() {
 					coord_equal() + 
 					theme_void() + 
 					geom_raster() + 
-					guides(color=FALSE,fill=FALSE)
+					guides(color='none',fill='none')
 				ph
 			},
 			height=850,

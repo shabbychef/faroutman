@@ -91,3 +91,29 @@ exp_esc <- function(x, y, maxit = 128L, escape = 2500.0) {
     .Call('_faroutman_exp_esc', PACKAGE = 'faroutman', x, y, maxit, escape)
 }
 
+#' @title
+#' Burning ship escape function
+#' @description
+#' Compute the Burning Ship fractal set.
+#'
+#' @details
+#' Computes the iterations required to escape based on
+#' \eqn{z_n \leftarrow \left(|Re(z_{n-1})| + i |Im(z_{n-1})|\right)^2 + c}
+#' given input \eqn{c}.
+#'
+#' @param x  the real coordinates
+#' @param y  the imaginary coordinates
+#' @param maxit  the maximum iterations to consider
+#' @param escape   the condition to determine escape, in squared distance units.
+#' @template etc
+#' @name fractals
+#' @rdname fractals
+#' @export
+#' @references 
+#' Wikipedia contributors, "Burning Ship fractal," Wikipedia, The Free Encyclopedia, 
+#' \url{https://en.wikipedia.org/w/index.php?title=Burning_Ship_fractal&oldid=1145232996}
+#' (accessed March 27, 2023).
+burning_ship_esc <- function(x, y, maxit = 128L, escape = 4.0) {
+    .Call('_faroutman_burning_ship_esc', PACKAGE = 'faroutman', x, y, maxit, escape)
+}
+

@@ -66,12 +66,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// burning_ship_esc
+IntegerVector burning_ship_esc(NumericVector x, NumericVector y, int maxit, double escape);
+RcppExport SEXP _faroutman_burning_ship_esc(SEXP xSEXP, SEXP ySEXP, SEXP maxitSEXP, SEXP escapeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type maxit(maxitSEXP);
+    Rcpp::traits::input_parameter< double >::type escape(escapeSEXP);
+    rcpp_result_gen = Rcpp::wrap(burning_ship_esc(x, y, maxit, escape));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_faroutman_mandelbrot_esc", (DL_FUNC) &_faroutman_mandelbrot_esc, 4},
     {"_faroutman_fibonacci_esc", (DL_FUNC) &_faroutman_fibonacci_esc, 4},
     {"_faroutman_cosine_esc", (DL_FUNC) &_faroutman_cosine_esc, 4},
     {"_faroutman_exp_esc", (DL_FUNC) &_faroutman_exp_esc, 4},
+    {"_faroutman_burning_ship_esc", (DL_FUNC) &_faroutman_burning_ship_esc, 4},
     {NULL, NULL, 0}
 };
 

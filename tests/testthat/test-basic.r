@@ -40,6 +40,7 @@ test_that("escape functions run",{#FOLDUP
 	expect_error(cosine_esc(0.25,0.01,maxit=256L),NA)
 	expect_error(exp_esc(0.25,0.01,maxit=256L),NA)
 	expect_error(fibonacci_esc(0.25,0.01,maxit=256L),NA)
+	expect_error(burning_ship_esc(0.25,0.01,maxit=256L),NA)
 })#UNFOLD
 #UNFOLD
 

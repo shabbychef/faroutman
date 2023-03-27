@@ -6,6 +6,7 @@
 \alias{fibonacci_esc}
 \alias{cosine_esc}
 \alias{exp_esc}
+\alias{burning_ship_esc}
 \title{Mandelbrot escape function}
 \usage{
 mandelbrot_esc(x, y, maxit = 128L, escape = 4)
@@ -15,6 +16,8 @@ fibonacci_esc(x, y, maxit = 128L, escape = 4)
 cosine_esc(x, y, maxit = 128L, escape = 987)
 
 exp_esc(x, y, maxit = 128L, escape = 2500)
+
+burning_ship_esc(x, y, maxit = 128L, escape = 4)
 }
 \arguments{
 \item{x}{the real coordinates}
@@ -33,6 +36,8 @@ Compute the Fibonacci set.
 Compute the Cosine set.
 
 Compute the Exp set.
+
+Compute the Burning Ship fractal set.
 }
 \details{
 Computes the iterations required to escape based on
@@ -50,6 +55,15 @@ given input \eqn{c}.
 Computes the iterations required to escape based on
 \eqn{z_n \leftarrow exp(z_{n-1}) + c}
 given input \eqn{c}.
+
+Computes the iterations required to escape based on
+\eqn{z_n \leftarrow \left(|Re(z_{n-1})| + i |Im(z_{n-1})|\right)^2 + c}
+given input \eqn{c}.
+}
+\references{
+Wikipedia contributors, "Burning Ship fractal," Wikipedia, The Free Encyclopedia, 
+\url{https://en.wikipedia.org/w/index.php?title=Burning_Ship_fractal&oldid=1145232996}
+(accessed March 27, 2023).
 }
 \seealso{
 \url{https://math.stackexchange.com/a/5705}

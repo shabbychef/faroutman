@@ -243,5 +243,59 @@ IntegerVector exp_esc(NumericVector x, NumericVector y,
 }
 //UNFOLD
 
+//' @title
+//' Burning ship escape function
+//' @description
+//' Compute the Burning Ship fractal set.
+//'
+//' @details
+//' Computes the iterations required to escape based on
+//' \eqn{z_n \leftarrow \left(|Re(z_{n-1})| + i |Im(z_{n-1})|\right)^2 + c}
+//' given input \eqn{c}.
+//'
+//' @param x  the real coordinates
+//' @param y  the imaginary coordinates
+//' @param maxit  the maximum iterations to consider
+//' @param escape   the condition to determine escape, in squared distance units.
+//' @template etc
+//' @name fractals
+//' @rdname fractals
+//' @export
+//' @references 
+//' Wikipedia contributors, "Burning Ship fractal," Wikipedia, The Free Encyclopedia, 
+//' \url{https://en.wikipedia.org/w/index.php?title=Burning_Ship_fractal&oldid=1145232996}
+//' (accessed March 27, 2023).
+// [[Rcpp::export]]
+IntegerVector burning_ship_esc(NumericVector x, NumericVector y,
+                               int maxit=128,double escape=4.0) {
+  if (x.size() != y.size()) { stop("real and imaginary parts should have same size"); }
+  IntegerVector retv(x.size());
+
+  // how long for z^2 + c to escape
+  int it;
+  double x2,y2,modulus;
+  double myx,myy;
+
+  int iii;
+  for (iii=0;iii < x.size();iii++) {
+      it = 0;
+      myx = 0;myy = 0;
+      while (it < maxit) {
+        x2 = myx*myx;
+        y2 = myy*myy;
+        modulus = x2 + y2;
+        if (modulus > escape) { 
+            break;
+        }
+        it++;
+        myy = 2 * abs(myx * myy) + y[iii];
+        myx = x2 - y2 + x[iii];
+      }
+      retv[iii] = it;
+  }
+  return(retv);
+}
+//UNFOLD
+
 //for vim modeline: (do not edit)
 // vim:et:nowrap:ts=4:sw=4:tw=129:fdm=marker:fmr=FOLDUP,UNFOLD:cms=//%s:tags=.c_tags;:syn=cpp:ft=cpp:mps+=<\:>:ai:si:cin:nu:fo=croql:cino=p0t0c5(0:
